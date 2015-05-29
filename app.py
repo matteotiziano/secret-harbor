@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import logging
+import shutil
 from flask import Flask, jsonify, render_template, request
 from werkzeug import secure_filename
 
@@ -10,7 +11,7 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['TEMP_FOLDER'] = '/tmp'
-app.config['OCR_OUTPUT_FILE'] = 'ocr_'
+app.config['OCR_OUTPUT_FILE'] = 'ocr'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 
 def allowed_file(filename):
@@ -43,27 +44,27 @@ def process():
     if request.method == 'POST':
         file = request.files['file']
         hocr = request.form.get('hocr') or ''
+        ext = '.hocr' if hocr else '.txt'
         if file and allowed_file(file.filename):
-            input_file = os.path.join(app.config['TEMP_FOLDER'], secure_filename(file.filename) + str(os.getpid()))
-            output_file = os.path.join(app.config['TEMP_FOLDER'], app.config['OCR_OUTPUT_FILE'] + str(os.getpid()))
+            folder = os.path.join(app.config['TEMP_FOLDER'], str(os.getpid()))
+            os.mkdir(folder)
+            input_file = os.path.join(folder, secure_filename(file.filename))
+            output_file = os.path.join(folder, app.config['OCR_OUTPUT_FILE'])
             file.save(input_file)
+            
             command = ['tesseract', input_file, output_file, '-l', request.form['lang'], hocr]
             proc = subprocess.Popen(command, stderr=subprocess.PIPE)
             proc.wait()
-            for filename in os.listdir(app.config['TEMP_FOLDER']):
-                if filename.startswith(os.path.basename(output_file)):
-                    output_file += os.path.splitext(filename)[-1]
-                    break
+            
+            output_file += ext
             f = open(output_file)
             resp = jsonify( {
                 u'status': 200,
-                u'filename':unicode(file.filename), 
-                u'ocr':unicode(f.read().decode('utf-8').strip())
+                u'ocr':{k:v.decode('utf-8') for k,v in enumerate(f.read().splitlines())}
             } )
             resp.status_code = 200
-            f.close()
-            os.remove(input_file)
-            os.remove(output_file)
+            
+            shutil.rmtree(folder)
             return resp
         else:
             resp = jsonify( { 
