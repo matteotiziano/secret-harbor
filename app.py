@@ -10,7 +10,7 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['TEMP_FOLDER'] = '/tmp'
-app.config['OCR_OUTPUT_FILE'] = 'ocr_output.txt'
+app.config['OCR_OUTPUT_FILE'] = 'ocr_'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 
 def allowed_file(filename):
@@ -42,13 +42,18 @@ def test():
 def process():
     if request.method == 'POST':
         file = request.files['file']
+        hocr = request.form.get('hocr') or ''
         if file and allowed_file(file.filename):
-            input_file = os.path.join(app.config['TEMP_FOLDER'], secure_filename(file.filename))
+            input_file = os.path.join(app.config['TEMP_FOLDER'], secure_filename(file.filename) + str(os.getpid()))
+            output_file = os.path.join(app.config['TEMP_FOLDER'], app.config['OCR_OUTPUT_FILE'] + str(os.getpid()))
             file.save(input_file)
-            output_file = os.path.join(app.config['TEMP_FOLDER'], app.config['OCR_OUTPUT_FILE'])
-            command = ['tesseract', input_file, output_file[:-4], '-l', request.form['lang']]
+            command = ['tesseract', input_file, output_file, '-l', request.form['lang'], hocr]
             proc = subprocess.Popen(command, stderr=subprocess.PIPE)
             proc.wait()
+            for filename in os.listdir(app.config['TEMP_FOLDER']):
+                if filename.startswith(os.path.basename(output_file)):
+                    output_file += os.path.splitext(filename)[-1]
+                    break
             f = open(output_file)
             resp = jsonify( {
                 u'status': 200,
@@ -76,4 +81,4 @@ def process():
         return resp
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
