@@ -5,7 +5,6 @@
     "Tesseract",
     "OCR"
   ],
-  "repository": "https://github.com/matteotiziano/secret-harbor",
   "logo": "https://small-sharp-tool.com/logo.svg",
   "success_url": "/",
   "buildpacks": [
