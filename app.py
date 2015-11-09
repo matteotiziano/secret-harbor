@@ -57,12 +57,19 @@ def process():
             proc.wait()
             
             output_file += ext
-            f = open(output_file)
-            resp = jsonify( {
-                u'status': 200,
-                u'ocr':{k:v.decode('utf-8') for k,v in enumerate(f.read().splitlines())}
-            } )
-            resp.status_code = 200
+            
+            if os.path.isfile(output_file):
+                f = open(output_file)
+                resp = jsonify( {
+                    u'status': 200,
+                    u'ocr':{k:v.decode('utf-8') for k,v in enumerate(f.read().splitlines())}
+                } )
+            else:
+                resp = jsonify( {
+                    u'status': 422,
+                    u'message': u'Unprocessable Entity'
+                } )
+                resp.status_code = 422
             
             shutil.rmtree(folder)
             return resp
