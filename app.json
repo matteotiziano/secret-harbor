@@ -6,7 +6,7 @@
     "OCR"
   ],
   "logo": "https://small-sharp-tool.com/logo.svg",
-  "success_url": "/",
+  "success_url": "/test",
   "buildpacks": [
     {
       "url": "heroku/python"
