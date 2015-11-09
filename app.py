@@ -15,7 +15,7 @@ app.config['OCR_OUTPUT_FILE'] = 'ocr'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in set(['pdf', 'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'])
+    return '.' in filename and filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'])
 
 @app.errorhandler(404)
 def not_found(error):
