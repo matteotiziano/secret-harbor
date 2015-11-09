@@ -6,7 +6,7 @@ Heroku app using [Tesseract OCR](https://code.google.com/p/tesseract-ocr/) writt
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
 ## Configuration
-In addition to the default [heroku-python-tesseract](https://github.com/heroku/heroku-python-tesseract), this app also requires the custom [heroku-buildpack-tesseract](https://github.com/matteotiziano/heroku-buildpack-tesseract).  
+In addition to the default [heroku-buildpack-python](https://github.com/heroku/heroku-buildpack-python), this app also requires the custom [heroku-buildpack-tesseract](https://github.com/matteotiziano/heroku-buildpack-tesseract).  
 
 Heroku natively supports [multiple buildpacks per app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
