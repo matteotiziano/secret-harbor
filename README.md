@@ -1,18 +1,19 @@
 # Secret-Harbor
 Heroku app using [Tesseract OCR](https://code.google.com/p/tesseract-ocr/) written in Python and based on the [Flask web microframework](http://flask.pocoo.org/). Only English and Finnish language are supported.
 
+## Quick Start - Push the Button!
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## Configuration
-As can be seen in the file `.buildpacks`, in addition to the default [heroku-python-tesseract](https://github.com/heroku/heroku-python-tesseract), this app also requires the custom [heroku-buildpack-tesseract](https://github.com/matteotiziano/heroku-buildpack-tesseract).  
+In addition to the default [heroku-buildpack-python](https://github.com/heroku/heroku-buildpack-python), this app also requires the custom [heroku-buildpack-tesseract](https://github.com/matteotiziano/heroku-buildpack-tesseract).  
 
-Before deploying the app, you should add a configuration variable to allow for multiple buildpacks as   
-```
-heroku config:set
-BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi
-```
+Heroku natively supports [multiple buildpacks per app](https://devcenter.heroku.com/articles/using-multiple-buildpacks-for-an-app).
 
-or (equivalently) change the default buildpack as   
+Before deploying the app, you should setup the base buildpack and add the custom buildpack to the app configuration:
 ```
-heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi
+heroku buildpacks:set heroku/python
+heroku buildpacks:add https://github.com/matteotiziano/heroku-buildpack-tesseract
 ```
 
 ## How to use

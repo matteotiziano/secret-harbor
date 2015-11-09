@@ -1,0 +1,18 @@
+{
+  "name": "Secret Harbor",
+  "description": "Heroku app using Tesseract OCR written in Python and based on the Flask web microframework. Only English and Finnish language are supported.",
+  "keywords": [
+    "Tesseract",
+    "OCR"
+  ],
+  "logo": "https://small-sharp-tool.com/logo.svg",
+  "success_url": "/test",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/matteotiziano/heroku-buildpack-tesseract"
+    }
+  ]
+}

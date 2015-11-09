@@ -15,7 +15,7 @@ app.config['OCR_OUTPUT_FILE'] = 'ocr'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in set(['pdf', 'png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'])
+    return '.' in filename and filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'jpeg', 'gif', 'tif', 'tiff'])
 
 @app.errorhandler(404)
 def not_found(error):
@@ -57,12 +57,19 @@ def process():
             proc.wait()
             
             output_file += ext
-            f = open(output_file)
-            resp = jsonify( {
-                u'status': 200,
-                u'ocr':{k:v.decode('utf-8') for k,v in enumerate(f.read().splitlines())}
-            } )
-            resp.status_code = 200
+            
+            if os.path.isfile(output_file):
+                f = open(output_file)
+                resp = jsonify( {
+                    u'status': 200,
+                    u'ocr':{k:v.decode('utf-8') for k,v in enumerate(f.read().splitlines())}
+                } )
+            else:
+                resp = jsonify( {
+                    u'status': 422,
+                    u'message': u'Unprocessable Entity'
+                } )
+                resp.status_code = 422
             
             shutil.rmtree(folder)
             return resp
