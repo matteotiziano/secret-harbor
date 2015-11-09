@@ -8,12 +8,6 @@
   "repository": "https://github.com/matteotiziano/secret-harbor",
   "logo": "https://small-sharp-tool.com/logo.svg",
   "success_url": "/",
-  "env": {
-    "WEB_CONCURRENCY": {
-      "description": "The number of processes to run.",
-      "value": "1"
-    }
-  },
   "buildpacks": [
     {
       "url": "heroku/python"
